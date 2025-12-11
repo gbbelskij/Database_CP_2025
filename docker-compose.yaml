@@ -25,5 +25,17 @@ services:
     ports:
       - "8000:8000"
 
+  # seed:
+  #   build: .
+  #   container_name: smart_home_seed
+  #   depends_on:
+  #     - db
+  #   env_file:
+  #     - .env
+  #   command: >
+  #     sh -c "sleep 1 &&
+  #            python seed.py"
+  #   restart: "no"
+
 volumes:
   db_data:
