@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.db import db
-from app.routers import auth, users, homes, devices, rooms, sensors, events, rules, logs
+from app.routers import auth, users, homes, devices, rooms, sensors, events, rules, logs, analytics
 
 # Инициализируем схему при старте
 db.init_schema()
@@ -33,6 +33,7 @@ app.include_router(sensors.router)
 app.include_router(events.router)
 app.include_router(rules.router)
 app.include_router(logs.router)
+app.include_router(analytics.router)
 
 
 @app.get("/", tags=["root"], summary="Проверка работоспособности")

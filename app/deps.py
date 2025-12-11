@@ -18,12 +18,10 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
         if user_id is None or role is None:
             raise credentials_exception
     except Exception:
-        print(1)
         raise credentials_exception
     
     user = queries.get_user_by_id(user_id)
     if not user:
-        print(2)
         raise credentials_exception
     return user
 

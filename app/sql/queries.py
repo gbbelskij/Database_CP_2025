@@ -227,3 +227,54 @@ def get_logs_by_user(user_id: int) -> List[Dict[str, Any]]:
     """Получить логи пользователя"""
     query = "SELECT * FROM logs WHERE user_id = %s ORDER BY timestamp DESC"
     return db.execute_query(query, (user_id,))
+
+# ==================== ANALYTICS: FUNCTIONS & VIEWS ====================
+
+def get_events_count_for_device_period(
+    device_id: int,
+    from_dt: datetime,
+    to_dt: datetime,
+) -> int:
+    """
+    Скалярная функция: обёртка над get_events_count_for_device()
+    Возвращает количество событий устройства за период.
+    """
+    query = "SELECT get_events_count_for_device(%s, %s, %s) AS cnt"
+    row = db.execute_single(query, (device_id, from_dt, to_dt))
+    return int(row["cnt"]) if row and row.get("cnt") is not None else 0
+
+
+def get_device_events_stats_fn(device_id: int) -> List[Dict[str, Any]]:
+    """
+    Табличная функция: обёртка над get_device_events_stats()
+    Возвращает сводку по типам событий устройства.
+    """
+    query = "SELECT * FROM get_device_events_stats(%s)"
+    return db.execute_query(query, (device_id,))
+
+
+def get_home_devices_summary() -> List[Dict[str, Any]]:
+    """
+    VIEW: агрегированная сводка устройств по домам.
+    Использует представление view_home_devices_summary.
+    """
+    query = "SELECT * FROM view_home_devices_summary ORDER BY home_id"
+    return db.execute_query(query)
+
+
+def get_user_activity_summary() -> List[Dict[str, Any]]:
+    """
+    VIEW: агрегированная активность пользователей по логам.
+    Использует представление view_user_activity.
+    """
+    query = "SELECT * FROM view_user_activity ORDER BY actions_count DESC, user_id"
+    return db.execute_query(query)
+
+
+def get_last_device_events() -> List[Dict[str, Any]]:
+    """
+    VIEW: последние события по каждому устройству.
+    Использует представление view_last_device_events.
+    """
+    query = "SELECT * FROM view_last_device_events ORDER BY device_id"
+    return db.execute_query(query)
